@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La mulți ani, Denisa Elena!</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --mono: 'Courier New', Courier, monospace;
+    --serif: Georgia, 'Times New Roman', serif;
+    --accent: rgba(190, 150, 255, 0.92);
+    --accent2: rgba(130, 200, 255, 0.85);
+    --text: rgba(235, 225, 255, 0.95);
+    --muted: rgba(190, 170, 255, 0.5);
+    --bg: #0d0b1a;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  #bg-canvas, #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  #bg-canvas { z-index: 0; }
+  #confetti-canvas { z-index: 1; }
+
+  .card {
+    position: relative;
+    z-index: 10;
+    width: min(460px, 90vw);
+    margin: 32px auto;
+    background: rgba(13, 10, 28, 0.80);
+    border: 1px solid rgba(180, 140, 255, 0.20);
+    border-radius: 18px;
+    padding: 44px 40px 40px;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* TYPEWRITER BLOCK */
+  .tw-block {
+    margin-bottom: 30px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 8px;
+  }
+
+  .tw-line {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: normal;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+    line-height: 1.8;
+    white-space: pre;
+    min-height: 27px;
+  }
+
+  .tw-line.line2 {
+    color: var(--accent2);
+    margin-top: 10px;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 9px;
+    height: 15px;
+    background: var(--accent);
+    margin-left: 1px;
+    vertical-align: middle;
+    animation: blink 0.8s step-end infinite;
+  }
+  .cursor.c2 { background: var(--accent2); }
+  .cursor.off { display: none; }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* DIVIDER */
+  .div-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(180,140,255,0.28), transparent);
+    margin: 26px 0;
+    opacity: 0;
+    transition: opacity 0.9s;
+  }
+  .div-line.show { opacity: 1; }
+
+  .div-short {
+    width: 44px;
+    height: 1px;
+    background: rgba(180,140,255,0.3);
+    margin: 26px auto;
+    opacity: 0;
+    transition: opacity 0.9s;
+  }
+  .div-short.show { opacity: 1; }
+
+  /* NAME BLOCK */
+  .name-block {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.9s, transform 0.9s;
+  }
+  .name-block.show { opacity: 1; transform: translateY(0); }
+
+  .label-top {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .wish-text {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: normal;
+    color: rgba(220, 210, 255, 0.88);
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .name-text {
+    font-family: var(--serif);
+    font-size: 46px;
+    font-weight: bold;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+  }
+
+  /* QUOTE */
+  .quote-block {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.9s, transform 0.9s;
+  }
+  .quote-block.show { opacity: 1; transform: translateY(0); }
+
+  .quote-text {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(190, 175, 230, 0.58);
+    line-height: 1.85;
+    letter-spacing: 0.01em;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="card">
+
+  <div class="tw-block">
+    <div class="tw-line" id="eq1"><span id="t1"></span><span class="cursor" id="c1"></span></div>
+    <div class="tw-line line2" id="eq2"><span id="t2"></span><span class="cursor c2 off" id="c2"></span></div>
+  </div>
+
+  <div class="div-line" id="d1"></div>
+
+  <div class="name-block" id="nb">
+    <div class="label-top">ziua numelui</div>
+    <div class="wish-text">La mul&#x21B;i ani!</div>
+    <div class="name-text">Denisa Elena</div>
+  </div>
+
+  <div class="div-short" id="d2"></div>
+
+  <div class="quote-block" id="qb">
+    <div class="quote-text">&#x201E;Ziua de ieri s&#x103; fie amintire &#x15F;i cea de m&#xE2;ine promisiune. Ast&#x103;zi &#xEE;ns&#x103; bucur&#x103;-te de ceea ce ai reu&#x15F;it!&#x201D;</div>
+  </div>
+
+</div>
+
+<script>
+/* ── BACKGROUND ── */
+(function(){
+  var c = document.getElementById('bg-canvas');
+  var ctx = c.getContext('2d');
+
+  var syms = [
+    'lim','∫','∑','π','∞','√','∂','∇','Δ',
+    'ε','δ','θ','λ','σ','≈','≠','≤','≥',
+    '∈','∀','∃','∧','∨','dx','n!','e^x',
+    'ln','sin','cos','φ','ψ','ω','α','β',
+    '∮','∏','⊥','x²','Σ','∝','f(x)'
+  ];
+
+  var cols = [
+    'rgba(160,110,255,A)',
+    'rgba(100,175,255,A)',
+    'rgba(210,110,240,A)',
+    'rgba(110,230,190,A)',
+    'rgba(255,150,200,A)',
+    'rgba(255,210,90,A)',
+  ];
+
+  function resize(){ c.width = window.innerWidth; c.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function Sym(init){
+    this.sym = syms[Math.floor(Math.random()*syms.length)];
+    this.x = Math.random()*c.width;
+    this.y = init ? Math.random()*c.height : c.height+10;
+    this.size = 14 + Math.random()*12;
+    this.vy = -(0.2 + Math.random()*0.3);
+    this.vx = (Math.random()-0.5)*0.2;
+    this.alpha = 0.15 + Math.random()*0.28;
+    this.col = cols[Math.floor(Math.random()*cols.length)];
+    this.phase = Math.random()*Math.PI*2;
+    this.spd = 0.003 + Math.random()*0.005;
+  }
+  Sym.prototype.tick = function(){
+    this.y += this.vy;
+    this.x += this.vx;
+    this.phase += this.spd;
+    if(this.y < -30){ this.y=c.height+10; this.x=Math.random()*c.width; this.sym=syms[Math.floor(Math.random()*syms.length)]; }
+  };
+  Sym.prototype.draw = function(){
+    var a = this.alpha*(0.65+0.35*Math.sin(this.phase));
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.fillStyle = this.col.replace('A','1');
+    ctx.font = this.size+"px 'Courier New',monospace";
+    ctx.fillText(this.sym, this.x, this.y);
+    ctx.restore();
+  };
+
+  var pool = [];
+  for(var i=0;i<100;i++) pool.push(new Sym(i<80));
+
+  function loop(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle='#0d0b1a';
+    ctx.fillRect(0,0,c.width,c.height);
+    var g=ctx.createRadialGradient(c.width/2,c.height/2,30,c.width/2,c.height/2,c.width*0.65);
+    g.addColorStop(0,'rgba(70,40,150,0.16)');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,c.width,c.height);
+    pool.forEach(function(s){ s.tick(); s.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ── CONFETTI ── */
+(function(){
+  var c = document.getElementById('confetti-canvas');
+  var ctx = c.getContext('2d');
+  function resize(){ c.width=window.innerWidth; c.height=window.innerHeight; }
+  resize();
+  window.addEventListener('resize',resize);
+
+  var cols=['#c084fc','#a78bfa','#60a5fa','#34d399','#f472b6','#fbbf24','#818cf8','#38bdf8'];
+
+  function Piece(burst){
+    this.x = burst ? c.width/2+(Math.random()-0.5)*60 : Math.random()*c.width;
+    this.y = burst ? c.height*0.38+(Math.random()-0.5)*30 : -10;
+    this.sz = burst ? 5+Math.random()*8 : 4+Math.random()*5;
+    this.col = cols[Math.floor(Math.random()*cols.length)];
+    this.vx = burst ? (Math.random()-0.5)*10 : (Math.random()-0.5)*1.4;
+    this.vy = burst ? -4-Math.random()*9 : 0.9+Math.random()*1.6;
+    this.grav = 0.11;
+    this.rot = Math.random()*Math.PI*2;
+    this.rotv = (Math.random()-0.5)*0.18;
+    this.dead = false;
+    this.circle = Math.random()>0.5;
+  }
+  Piece.prototype.tick = function(){
+    this.x+=this.vx; this.vy+=this.grav; this.y+=this.vy; this.rot+=this.rotv;
+    if(this.y>c.height+20) this.dead=true;
+  };
+  Piece.prototype.draw = function(){
+    ctx.save();
+    ctx.globalAlpha=0.88;
+    ctx.fillStyle=this.col;
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.rot);
+    if(this.circle){ ctx.beginPath(); ctx.arc(0,0,this.sz/2,0,Math.PI*2); ctx.fill(); }
+    else { ctx.fillRect(-this.sz/2,-this.sz/4,this.sz,this.sz/2); }
+    ctx.restore();
+  };
+
+  var pieces=[];
+  setInterval(function(){ if(pieces.length<180) pieces.push(new Piece(false)); },110);
+
+  window.__burst=function(){
+    for(var i=0;i<140;i++) pieces.push(new Piece(true));
+  };
+
+  function loop(){
+    ctx.clearRect(0,0,c.width,c.height);
+    pieces=pieces.filter(function(p){ return !p.dead; });
+    pieces.forEach(function(p){ p.tick(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ── TYPEWRITER ── */
+(function(){
+  var line1 = 'lim f(Denisa) = \u221E\n    t \u2192 azi';
+  var line2 = '\u222B z\u00E2mbet dt = fericire';
+
+  var t1 = document.getElementById('t1');
+  var t2 = document.getElementById('t2');
+  var c1 = document.getElementById('c1');
+  var c2 = document.getElementById('c2');
+  var d1 = document.getElementById('d1');
+  var nb = document.getElementById('nb');
+  var d2 = document.getElementById('d2');
+  var qb = document.getElementById('qb');
+
+  function type(el, cur, text, spd, cb){
+    var i=0;
+    cur.classList.remove('off');
+    function step(){
+      if(i<=text.length){
+        el.textContent=text.slice(0,i);
+        i++;
+        setTimeout(step, spd+(Math.random()-0.5)*28);
+      } else {
+        cur.classList.add('off');
+        if(cb) cb();
+      }
+    }
+    step();
+  }
+
+  function show(el, delay){
+    setTimeout(function(){ el.classList.add('show'); }, delay);
+  }
+
+  setTimeout(function(){
+    type(t1, c1, line1, 60, function(){
+      setTimeout(function(){
+        type(t2, c2, line2, 60, function(){
+          show(d1, 400);
+          setTimeout(function(){
+            nb.classList.add('show');
+            if(window.__burst) window.__burst();
+            show(d2, 700);
+            show(qb, 1000);
+          }, 700);
+        });
+      }, 350);
+    });
+  }, 700);
+})();
+</script>
+</body>
+</html>
